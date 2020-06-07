@@ -6,8 +6,8 @@ def create_tables():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS Users (
-                Id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                UserName VARCHAR(256) NOT NULL,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                UserName VARCHAR(256) NOT NULL UNIQUE,
                 Password VARCHAR(256) NOT NULL
             );
             """, []
@@ -37,7 +37,7 @@ def create_tables():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS Posts (
-                Id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Title VARCHAR(128) NOT NULL,
                 Content TEXT NOT NULL,
                 Score INTEGER DEFAULT 0,
@@ -54,7 +54,7 @@ def create_tables():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS Comments (
-                Id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Content TEXT,
                 PostId INTEGER NOT NULL,
                 AuthorId INTEGER NOT NULL,

@@ -7,8 +7,9 @@ class Database:
     def __init__(self, db_file_path: str):
         self.database = sqlite3.connect(db_file_path)
 
-    def __enter__(self):
-        return self.database.cursor()
+    def __enter__(self) -> sqlite3.Cursor:
+        cursor = self.database.cursor()
+        return cursor
 
     def __exit__(self,
                  exc_type: Optional[Type[BaseException]],

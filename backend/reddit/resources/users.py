@@ -7,7 +7,6 @@ from reddit.models.user import User, InvalidPasswordError, UserNotFoundError
 from sqlite3 import IntegrityError
 
 
-
 class Users(Resource):
     def __init__(self):
         super().__init__()

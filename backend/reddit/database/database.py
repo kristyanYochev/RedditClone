@@ -5,11 +5,11 @@ from typing import Optional, Type
 
 class Database:
     def __init__(self, db_file_path: str):
-        self.database = sqlite3.connect(db_file_path)
+        self.db_file_path = db_file_path
 
     def __enter__(self) -> sqlite3.Cursor:
-        cursor = self.database.cursor()
-        return cursor
+        self.database = sqlite3.connect(self.db_file_path)
+        return self.database.cursor()
 
     def __exit__(self,
                  exc_type: Optional[Type[BaseException]],
@@ -19,3 +19,4 @@ class Database:
             self.database.commit()
         else:
             self.database.rollback()
+        self.database.close()

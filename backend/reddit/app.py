@@ -2,8 +2,11 @@ from flask import Flask
 from flask_cors import CORS
 from reddit.extensions import api, jwt
 
+from reddit.resources.users import Users
+
 
 def register_extensions(app: Flask):
+    api.add_resource(Users, "/auth")
     api.init_app(app)
     jwt.init_app(app)
     CORS(app)

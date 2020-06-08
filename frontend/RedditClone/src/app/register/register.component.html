@@ -1,0 +1,30 @@
+<form (submit)="registerUser()" class="register-form">
+  <mat-card>
+    <mat-card-title>Our fancy registration form</mat-card-title>
+    <mat-card-content>
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>Username</mat-label>
+          <input [(ngModel)]="username" name="username" matInput placeholder="Your fancy-pants username">
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>Password</mat-label>
+          <input [(ngModel)]="password" name="password" matInput type="password" placeholder="Your very secret password">
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <mat-label>Repeat password</mat-label>
+          <input [(ngModel)]="repeatPassword" name="repeatPassword" matInput type="password" placeholder="Just to see if you mistyped something">
+        </mat-form-field>
+      </p>
+    </mat-card-content>
+    <mat-card-content>
+      <button mat-raised-button type="submit" color="primary">Hop onboard</button>
+    </mat-card-content>
+  </mat-card>
+
+
+</form>

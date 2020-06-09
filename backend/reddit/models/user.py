@@ -46,3 +46,13 @@ class User:
                 raise InvalidPasswordError()
 
             return uid
+
+    def subscribeToSubreddit(self, sub_name: str):
+        with db as cursor:
+            cursor.execute(
+                """
+                INSERT INTO UserSubredditSubscriptions (UserId, SubredditName)
+                VALUES (?, ?)
+                """,
+                (self.id, sub_name)
+            )

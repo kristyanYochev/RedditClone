@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from reddit.models.post import Post
 from sqlite3 import IntegrityError
 
+
 class Posts(Resource):
     def __init__(self):
         super().__init__()
@@ -37,29 +38,21 @@ class Posts(Resource):
         authorId = get_jwt_identity()
 
         try:
-            Post.add(request.get("title"), 
-                    request.get("content"), 
-                    request.get("score"), 
-                    authorId, 
-                    request.get("subredditName"))
-            
+            Post.add(request.get("title"),
+                     request.get("content"),
+                     request.get("score"),
+                     authorId,
+                     request.get("subredditName"))
             return {}, 200
-        
         except IntegrityError:
             return {
                 "message": {
                     "error": "Cannot add to non-existent subreddit!"
                 }
             }, 400
-
         except Exception as e:
             return {
                 "message": {
                     "error": f"Internal Server Error: {e}"
                 }
             }, 500
-
-
-
-
-    

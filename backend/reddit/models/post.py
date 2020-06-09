@@ -28,10 +28,11 @@ class Post:
     def edit(self, title: str, content: str):
         with db as cursor:
             cursor.execute(
-                "UPDATE Posts SET Title = ?, Content = ?;",
+                "UPDATE Posts SET Title = ?, Content = ? WHERE Id = ?;",
                 (
                     title,
-                    content
+                    content,
+                    self.id
                 )
             )
 

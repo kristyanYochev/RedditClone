@@ -8,6 +8,11 @@ class Posts(Resource):
         super().__init__()
         self.parser = reqparse.RequestParser()
         self.parser.add_argument(
+            "id",
+            type=int,
+            required=True,
+        )
+        self.parser.add_argument(
             "title",
             type=str,
             required=True,
@@ -58,6 +63,33 @@ class Posts(Resource):
                     "error": f"Internal Server Error: {e}"
                 }
             }, 500
+
+    @jwt_required
+    def put(self):
+        id = self.parser.parse_args().get("id")
+        request = self.parser.parse_args()
+
+        try:
+            Post(id).edit(request.get("title"),
+                    request.get("content"))
+
+            return {}, 200
+
+        except Exception as e:
+            return {
+                "message": {
+                    "error": f"Internal Server Error: {e}"
+                }
+            }, 500
+
+    @jwt_required
+    def delete(self):
+        id = self.parser.parse_args().get("id")
+        
+        Post(id).delete()
+
+        return {}, 200
+
 
 
 

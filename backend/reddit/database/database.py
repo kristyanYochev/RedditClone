@@ -9,7 +9,9 @@ class Database:
 
     def __enter__(self) -> sqlite3.Cursor:
         self.database = sqlite3.connect(self.db_file_path)
-        return self.database.cursor()
+        cursor = self.database.cursor()
+        cursor.execute("PRAGMA foreign_keys = ON")
+        return cursor
 
     def __exit__(self,
                  exc_type: Optional[Type[BaseException]],

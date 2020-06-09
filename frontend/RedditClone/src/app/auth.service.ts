@@ -16,4 +16,17 @@ export class AuthService {
       username, password
     });
   }
+
+  logInUser(username: string, password: string) {
+    const request =  this.http.put(`${this.baseURL}/auth`, {
+      username, password
+    });
+    request.subscribe((resp: any) => {
+      this.accessToken = resp.access_token;
+      this.refreshToken = resp.refresh_token;
+    }, (error) => {
+      console.log(error);
+    });
+    return request;
+  }
 }

@@ -25,6 +25,13 @@ class Subreddit:
                 (self.name,)
             )
 
+    def delete(self):
+        with db as cursor:
+            cursor.execute(
+                "DELETE FROM Subreddits WHERE Name = ?",
+                (self.name,)
+            )
+
     def toJSON(self):
         return {
             "name": self.name

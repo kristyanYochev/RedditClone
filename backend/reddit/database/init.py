@@ -43,7 +43,7 @@ def create_tables():
                 Score INTEGER DEFAULT 0,
                 UploadTime DATETIME DEFAULT CURRENT_TIMESTAMP,
                 AuthorId INTEGER,
-                SubredditName INTEGER,
+                SubredditName STRING,
                 FOREIGN KEY (AuthorId) REFERENCES Users(Id) ON DELETE CASCADE,
                 FOREIGN KEY (SubredditName) REFERENCES Subreddits(Name)
                     ON DELETE CASCADE

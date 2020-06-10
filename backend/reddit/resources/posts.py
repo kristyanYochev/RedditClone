@@ -37,6 +37,19 @@ class Posts(Resource):
         )
 
     @jwt_required
+    def get(self):
+        authorId = get_jwt_identity()
+
+        posts = Post.getFromUser(authorId)
+
+        jsonify = list()
+
+        for i in range(len(posts)):
+            jsonify.append(Post.toJSON(posts[i].title, posts[i].content, posts[i].score, posts[i].subredditName))
+            
+        return jsonify
+
+    @jwt_required
     def post(self):
         request = self.parser.parse_args()
         authorId = get_jwt_identity()
@@ -66,11 +79,10 @@ class Posts(Resource):
 
     @jwt_required
     def put(self):
-        id = self.parser.parse_args().get("id")
         request = self.parser.parse_args()
 
         try:
-            Post(id).edit(request.get("title"),
+            Post(request.get("id")).edit(request.get("title"),
                     request.get("content"))
 
             return {}, 200

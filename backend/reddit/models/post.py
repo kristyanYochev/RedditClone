@@ -45,12 +45,13 @@ class Post:
                 ORDER BY p.Score DESC
                 ''', (subredditName,)
             )
+
             rows = cursor.fetchall()
+
             return list(map(lambda row: {
                 'title': row[0], 'score': row[1], 'author': row[2]
             }, rows))
             
-
     def updateScore(self, amount: int):
         with db as cursor:
             cursor.execute(

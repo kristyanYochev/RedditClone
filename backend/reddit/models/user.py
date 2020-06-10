@@ -27,7 +27,7 @@ class User:
             )
 
     @staticmethod
-    def veify(username: str, password: str) -> int:
+    def verify(username: str, password: str) -> int:
         with db as cursor:
             cursor.execute(
                 "SELECT Id, Password FROM Users WHERE Username = ?",
@@ -46,13 +46,3 @@ class User:
                 raise InvalidPasswordError()
 
             return uid
-
-    def subscribeToSubreddit(self, sub_name: str):
-        with db as cursor:
-            cursor.execute(
-                """
-                INSERT INTO UserSubredditSubscriptions (UserId, SubredditName)
-                VALUES (?, ?)
-                """,
-                (self.id, sub_name)
-            )

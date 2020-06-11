@@ -1,19 +1,29 @@
 from reddit.extensions import db
 from typing import Optional
 
+
 class Post:
     def __init__(self, pid: Optional[int] = None):
         self.id = pid
 
     @staticmethod
-    def add(title: str, content: str, authorId: int, subredditName: str):
+    def add(title: str,
+            content: str,
+            authorId: int,
+            subredditName: str):
         with db as cursor:
             cursor.execute(
-                "INSERT INTO Posts (Title, Content, Score, AuthorId, SubredditName) VALUES (?, ?, ?, ?, ?);",
+                """
+                INSERT INTO Posts (
+                    Title,
+                    Content,
+                    AuthorId,
+                    SubredditName
+                ) VALUES (?, ?, ?, ?);
+                """,
                 (
                     title,
                     content,
-                    0,
                     authorId,
                     subredditName
                 )
@@ -51,12 +61,12 @@ class Post:
             return list(map(lambda row: {
                 'title': row[0], 'content': row[1], 'score': row[2], 'subredditName': row[3]
             }, rows))
-            
 
     def updateScore(self, amount: int):
         with db as cursor:
             cursor.execute(
-                "UPDATE Posts SET Score = Score + ? WHERE Id = ?;", (amount, self.id)
+                "UPDATE Posts SET Score = Score + ? WHERE Id = ?;",
+                (amount, self.id)
             )
 
     @staticmethod

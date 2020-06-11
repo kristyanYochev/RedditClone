@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from reddit.models.post import Post
 from sqlite3 import IntegrityError
 
+
 class Posts(Resource):
     def __init__(self):
         super().__init__()
@@ -10,7 +11,6 @@ class Posts(Resource):
         self.parser.add_argument(
             "id",
             type=int,
-            required=True,
         )
         self.parser.add_argument(
             "title",
@@ -36,32 +36,35 @@ class Posts(Resource):
 
         posts = Post.getFromUser(authorId)
 
-        jsonify = list()
-
-        for i in range(len(posts)):
-            jsonify.append(Post.toJSON(posts[i].title, posts[i].content, posts[i].score, posts[i].subredditName))
+        jsonify = list(map(
+            lambda post: Post.toJSON(
+                post.title, 
+                post.content, 
+                post.score, 
+                post.subredditName), 
+            posts
+        ))
             
         return jsonify
 
+    @jwt_required
     def post(self):
         request = self.parser.parse_args()
         authorId = get_jwt_identity()
 
         try:
             Post.add(request.get("title"), 
-                    request.get("content"), 
-                    authorId, 
-                    request.get("subredditName"))
+                     request.get("content"), 
+                     authorId, 
+                     request.get("subredditName"))
             
             return {}, 200
-        
         except IntegrityError:
             return {
                 "message": {
                     "error": "Cannot add to non-existent subreddit!"
                 }
             }, 400
-
         except Exception as e:
             return {
                 "message": {
@@ -69,6 +72,7 @@ class Posts(Resource):
                 }
             }, 500
 
+    @jwt_required
     def put(self):
         request = self.parser.parse_args()
 
@@ -85,6 +89,7 @@ class Posts(Resource):
                 }
             }, 500
 
+    @jwt_required
     def delete(self):
         id = self.parser.parse_args().get("id")
         

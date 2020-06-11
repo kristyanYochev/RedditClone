@@ -29,4 +29,8 @@ export class AuthService {
     });
     return request;
   }
+
+  getAccessToken() {
+    return this.accessToken;
+  }
 }

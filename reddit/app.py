@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import Flask, request, render_template, redirect, session
 
+from reddit.models.comment import Comment
 from reddit.models.user import User, UserNotFoundError, InvalidPasswordError
 from reddit.models.post import Post
 from reddit.models.subreddit import Subreddit
@@ -108,7 +109,42 @@ def post(postId: int):
 
         return redirect('/posts')
 
+@app.route("/comments", methods=["POST"])
+def add_comment():
+    content: str = request.form["content"]
+    postid: int = request.form["postId"]
+    parentid: int = request.form.get("parentId")
 
+    uid = session["userId"]
+
+    Comment.add(content,postid,uid,parentid)
+
+    return redirect(f"/posts/{postid}")
+
+@app.route("/comments/<int:commentid>", methods=["GET", "PUT", "DELETE"])
+def delete_comments(commentid: int):
+    uid = session["userId"]
+
+    if request.method == "GET":
+        Comment(commentid).fetch()
+        return render_template("edit_comment.html", comment=Comment(commentid))
+    elif request.method == "DELETE":
+        try:
+            Comment(commentid).delete(uid)
+            return redirect("/")
+
+        except PermissionError:
+            return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
+    else:
+        try:
+            values = (
+                request.form['content']
+            )
+            Comment(commentid).edit(values)
+            return redirect("/")
+
+        except PermissionError:
+            return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
 
 @app.route("/r")
 def subreddits():

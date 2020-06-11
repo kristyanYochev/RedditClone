@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Clone - Add post</title>
+</head>
+<body>
+  <form action="/posts" method="POST">
+    <p>
+      <label>
+        Title:
+        <input name="title" placeholder="Chop chop, what's the title of your post?">
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Content:
+        <input name="content" placeholder="Here lies your post's content. Make it intriguing! ">
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Subreddit:
+        <input name="subredditName" placeholder="What subreddit is this going to?">
+      </label>
+    </p>
+    
+    {% if error is not none %}
+      <span>ERROR: {{ error }}</span>
+    {% endif %}
+
+    <p>
+      <button type="submit">Add this shit</button>
+    </p>
+  </form>
+</body>
+</html>

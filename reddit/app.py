@@ -1,6 +1,8 @@
+from functools import wraps
 from flask import Flask, request, render_template, redirect, session
 
 from reddit.models.user import User, UserNotFoundError, InvalidPasswordError
+from reddit.models.post import Post
 from sqlite3 import IntegrityError
 
 
@@ -12,13 +14,9 @@ def create_app() -> Flask:
 
 app = create_app()
 
-
 @app.route("/")
 def index():
-    return """
-        <h1>Hello World</h1>
-        <a href='/login'>Login</a>
-        <a href='/register'>Register</a>"""
+    return render_template("index.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -63,3 +61,49 @@ def register():
             return redirect("/login")
         except IntegrityError:
             return render_template("register.html", error="Username taken!")
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    if request.method == "GET":
+        session.pop("userId", None)
+        session.pop("loggedIn", None)
+        return redirect("/")
+
+
+@app.route("/posts", methods=["GET", "POST"])
+def posts():
+    uid = session["userId"]
+
+    if request.method == "GET":
+        return render_template("post.html", posts=Post.getFromUser(uid), error=None)
+    else:
+        title: str = request.form["title"]
+        content: str = request.form["content"]
+        subredditName: str = request.form["subredditName"]
+
+        try:
+            Post.add(title, content, uid, subredditName)
+            return redirect("/")
+
+        except IntegrityError:
+            return render_template("post.html", error="Cannot add to non-existent subreddit!")
+
+@app.route("/posts/<int:id>", methods=["GET", "PUT", "DELETE"])
+def post(postId: int):
+    if request.method == "GET":
+        return render_template("detailed.html", post=Post.fetch(postId))
+
+    elif request.method == "PUT":
+        title: str = request.form["title"]
+        content: str = request.form["content"]
+
+        Post(postId).edit(title, content)
+
+        return redirect("/posts/<int:postId>")
+
+    else:
+        Post(postId).delete()
+
+        return redirect('/posts')
+
+

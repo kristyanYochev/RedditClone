@@ -52,7 +52,7 @@ class Post:
             cursor.execute(
                 '''
                 SELECT p.Title, p.Content, p.Score, p.SubredditName FROM Posts AS p
-                JOIN UserSubredditSubscriptions AS uss ON p.AuthorId = uss.Id
+                JOIN UserSubredditSubscriptions AS uss ON p.AuthorId = uss.UserId
                 WHERE p.AuthorId = ?
                 ORDER BY p.Score DESC
                 ''', (id,)
@@ -79,3 +79,19 @@ class Post:
             "score": score,
             "subredditName": subredditName
         }
+
+    @staticmethod
+    def fetch(id: int):
+        with db as cursor:
+            cursor.execute(
+                '''
+                SELECT * FROM Posts WHERE Id = ?
+                ''', (id,)
+            )
+            result = cursor.fetchone()
+            data = {}
+
+            data["title"] = result[1]
+            data["content"] = result[2]
+            data["subredditName"] = result[6]
+            return data

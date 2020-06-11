@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Clone - Login</title>
+</head>
+<body>
+  <form action="/register" method="POST">
+    <p>
+      <label>
+        Username:
+        <input name="username" placeholder="Your username goes here, dingus">
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Password:
+        <input name="password" type="password" placeholder="The secred word">
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Repeat Password:
+        <input name="repeat_password" type="password" placeholder="Just in case you misspelled something, you dummy">
+      </label>
+    </p>
+    
+    {% if error is not none %}
+      <span>ERROR: {{ error }}</span>
+    {% endif %}
+
+    <p>
+      <button type="submit">Submit this shit</button>
+    </p>
+  </form>
+</body>
+</html>

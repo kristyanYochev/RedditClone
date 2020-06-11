@@ -9,7 +9,6 @@ class Post:
     @staticmethod
     def add(title: str,
             content: str,
-            score: int,
             authorId: int,
             subredditName: str):
         with db as cursor:
@@ -18,15 +17,13 @@ class Post:
                 INSERT INTO Posts (
                     Title,
                     Content,
-                    Score,
                     AuthorId,
                     SubredditName
-                ) VALUES (?, ?, ?, ?, ?);
+                ) VALUES (?, ?, ?, ?);
                 """,
                 (
                     title,
                     content,
-                    score,
                     authorId,
                     subredditName
                 )
@@ -41,26 +38,28 @@ class Post:
     def edit(self, title: str, content: str):
         with db as cursor:
             cursor.execute(
-                "UPDATE Posts SET Title = ?, Content = ?;",
+                "UPDATE Posts SET Title = ?, Content = ? WHERE Id = ?;",
                 (
                     title,
-                    content
+                    content,
+                    self.id
                 )
             )
 
-    def getBySubreddit(self, subredditName: str):
+    @staticmethod
+    def getFromUser(id: int):
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT p.Title, p.Score, u.UserName FROM Posts AS p
-                JOIN Users AS u ON p.AuthorId = u.Id
-                WHERE p.SubredditName = ?
+                SELECT p.Title, p.Content, p.Score, p.SubredditName FROM Posts AS p
+                JOIN UserSubredditSubscriptions AS uss ON p.AuthorId = uss.Id
+                WHERE p.AuthorId = ?
                 ORDER BY p.Score DESC
-                ''', (subredditName,)
+                ''', (id,)
             )
             rows = cursor.fetchall()
             return list(map(lambda row: {
-                'title': row[0], 'score': row[1], 'author': row[2]
+                'title': row[0], 'content': row[1], 'score': row[2], 'subredditName': row[3]
             }, rows))
 
     def updateScore(self, amount: int):
@@ -69,3 +68,12 @@ class Post:
                 "UPDATE Posts SET Score = Score + ? WHERE Id = ?;",
                 (amount, self.id)
             )
+
+    @staticmethod
+    def toJSON(title: str, content: str, score: int, subredditName: str):
+        return {
+            "title": title,
+            "content": content,
+            "score": score,
+            "subredditName": subredditName
+        }

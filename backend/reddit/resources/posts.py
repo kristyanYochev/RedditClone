@@ -3,10 +3,15 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from reddit.models.post import Post
 from sqlite3 import IntegrityError
 
+
 class Posts(Resource):
     def __init__(self):
         super().__init__()
         self.parser = reqparse.RequestParser()
+        self.parser.add_argument(
+            "id",
+            type=int,
+        )
         self.parser.add_argument(
             "title",
             type=str,
@@ -20,16 +25,27 @@ class Posts(Resource):
             help="Content is required"
         )
         self.parser.add_argument(
-            "score",
-            type=int,
-            required=True,
-            help="Score is required"
-        )
-        self.parser.add_argument(
             "subredditName",
             type=str,
             required=True,
         )
+
+    @jwt_required
+    def get(self):
+        authorId = get_jwt_identity()
+
+        posts = Post.getFromUser(authorId)
+
+        jsonify = list(map(
+            lambda post: Post.toJSON(
+                post.title, 
+                post.content, 
+                post.score, 
+                post.subredditName), 
+            posts
+        ))
+            
+        return jsonify
 
     @jwt_required
     def post(self):
@@ -38,19 +54,33 @@ class Posts(Resource):
 
         try:
             Post.add(request.get("title"), 
-                    request.get("content"), 
-                    request.get("score"), 
-                    authorId, 
-                    request.get("subredditName"))
+                     request.get("content"), 
+                     authorId, 
+                     request.get("subredditName"))
             
             return {}, 200
-        
         except IntegrityError:
             return {
                 "message": {
                     "error": "Cannot add to non-existent subreddit!"
                 }
             }, 400
+        except Exception as e:
+            return {
+                "message": {
+                    "error": f"Internal Server Error: {e}"
+                }
+            }, 500
+
+    @jwt_required
+    def put(self):
+        request = self.parser.parse_args()
+
+        try:
+            Post(request.get("id")).edit(request.get("title"),
+                    request.get("content"))
+
+            return {}, 200
 
         except Exception as e:
             return {
@@ -58,6 +88,15 @@ class Posts(Resource):
                     "error": f"Internal Server Error: {e}"
                 }
             }, 500
+
+    @jwt_required
+    def delete(self):
+        id = self.parser.parse_args().get("id")
+        
+        Post(id).delete()
+
+        return {}, 200
+
 
 
 

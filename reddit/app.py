@@ -3,6 +3,8 @@ from flask import Flask, request, render_template, redirect, session
 
 from reddit.models.user import User, UserNotFoundError, InvalidPasswordError
 from reddit.models.post import Post
+from reddit.models.subreddit import Subreddit
+
 from sqlite3 import IntegrityError
 
 
@@ -107,3 +109,22 @@ def post(postId: int):
         return redirect('/posts')
 
 
+
+@app.route("/r")
+def subreddits():
+    search_term = request.args.get("q")
+    subs = Subreddit.search(search_term, session["userId"])
+
+    return render_template("subreddits.html", subs=subs)
+
+
+@app.route("/subscribe/<subName>")
+def subscribe(subName: str):
+    try:
+        User(session["userId"]).subscribeToSubreddit(subName)
+        return redirect("/")
+    except IntegrityError:
+        return """
+            <h1>Cannot subscribe to subreddit
+            you are already subscribed to!</h1><a href="/">BACK TO HOME</a>
+            """

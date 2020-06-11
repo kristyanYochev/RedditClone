@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Clone - Login</title>
+</head>
+<body>
+  <form action="/login" method="POST">
+    <p>
+      <label>
+        Username:
+        <input name="username" placeholder="Your username goes here, dingus">
+      </label>
+    </p>
+
+    <p>
+      <label>
+        Password:
+        <input name="password" type="password" placeholder="The secred word">
+      </label>
+    </p>
+    
+    {% if error is not none %}
+      <span>ERROR: {{ error }}</span>
+    {% endif %}
+
+    <p>
+      <button type="submit">Submit this shit</button>
+    </p>
+  </form>
+</body>
+</html>

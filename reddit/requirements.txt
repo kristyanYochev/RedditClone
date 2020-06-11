@@ -1,5 +1,2 @@
 Flask
-flask-restful
-flask-jwt-extended
-flask-cors
 passlib

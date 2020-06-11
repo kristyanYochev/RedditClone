@@ -57,7 +57,9 @@ class Post:
                 ORDER BY p.Score DESC
                 ''', (id,)
             )
+
             rows = cursor.fetchall()
+
             return list(map(lambda row: {
                 'title': row[0], 'content': row[1], 'score': row[2], 'subredditName': row[3]
             }, rows))

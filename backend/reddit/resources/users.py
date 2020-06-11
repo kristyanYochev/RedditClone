@@ -49,7 +49,7 @@ class Users(Resource):
         request = self.parser.parse_args()
 
         try:
-            user_id = User.veify(
+            user_id = User.verify(
                 request.get("username"),
                 request.get("password")
             )

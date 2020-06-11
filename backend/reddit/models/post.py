@@ -6,14 +6,14 @@ class Post:
         self.id = pid
 
     @staticmethod
-    def add(title: str, content: str, score: int, authorId: int, subredditName: str):
+    def add(title: str, content: str, authorId: int, subredditName: str):
         with db as cursor:
             cursor.execute(
                 "INSERT INTO Posts (Title, Content, Score, AuthorId, SubredditName) VALUES (?, ?, ?, ?, ?);",
                 (
                     title,
                     content,
-                    score,
+                    0,
                     authorId,
                     subredditName
                 )

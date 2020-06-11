@@ -1,0 +1,30 @@
+<form (submit)="addPost()" class="post-form">
+    <mat-card>
+      <mat-card-title>Add post</mat-card-title>
+      <mat-card-content>
+        <p>
+          <mat-form-field class="full-width">
+            <mat-label>Title</mat-label>
+            <input [(ngModel)]="title" name="title" matInput placeholder="Title of post">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field class="full-width">
+            <mat-label>Content</mat-label>
+            <input [(ngModel)]="content" name="content" matInput placeholder="Content of post">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field class="full-width">
+            <mat-label>Subreddit</mat-label>
+            <input [(ngModel)]="subreddit" name="subreddit" matInput placeholder="Which subreddit is this going in?">
+          </mat-form-field>
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button type="submit" color="primary">Submit</button>
+      </mat-card-actions>
+    </mat-card>
+  
+  
+  </form>

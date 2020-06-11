@@ -25,12 +25,6 @@ class Posts(Resource):
             help="Content is required"
         )
         self.parser.add_argument(
-            "score",
-            type=int,
-            required=True,
-            help="Score is required"
-        )
-        self.parser.add_argument(
             "subredditName",
             type=str,
             required=True,
@@ -49,7 +43,6 @@ class Posts(Resource):
             
         return jsonify
 
-    @jwt_required
     def post(self):
         request = self.parser.parse_args()
         authorId = get_jwt_identity()
@@ -57,7 +50,6 @@ class Posts(Resource):
         try:
             Post.add(request.get("title"), 
                     request.get("content"), 
-                    request.get("score"), 
                     authorId, 
                     request.get("subredditName"))
             
@@ -77,7 +69,6 @@ class Posts(Resource):
                 }
             }, 500
 
-    @jwt_required
     def put(self):
         request = self.parser.parse_args()
 
@@ -94,7 +85,6 @@ class Posts(Resource):
                 }
             }, 500
 
-    @jwt_required
     def delete(self):
         id = self.parser.parse_args().get("id")
         

@@ -7,10 +7,13 @@ class Subreddit:
         self.name = name
 
     @staticmethod
-    def search(query: str) -> List['Subreddit']:
+    def search(query: str, uid: int) -> List['Subreddit']:
         with db as cursor:
             cursor.execute(
-                "SELECT Name FROM Subreddits WHERE Name LIKE '%' || ? || '%'",
+                """
+                SELECT Name FROM Subreddits
+                    WHERE Name LIKE '%' || ? || '%'
+                """,
                 (query,)
             )
 

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Clone - Subreddits</title>
+</head>
+<body>
+  <form action="/r" method="get">
+    <p>
+      <label>
+        Search subs
+        <input name="q" placeholder="The name of your fav sub">
+      </label>
+    </p>
+    <p>
+      <button type="submit">Search for it</button>
+    </p>
+  </form>
+
+  {% for sub in subs %}
+    <p><a href="/subscribe/{{ sub.name }}">{{ sub.name }}</a></p>
+  {% endfor %}
+</body>
+</html>

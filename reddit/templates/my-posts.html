@@ -8,9 +8,13 @@
 <body>
   <h1>My Posts</h1>
   {% for post in posts %}
-    <p><b>Title: </b>post.title</p>
-    <p><b>Content: </b>post.content</p>
-    <p><b>Subreddit: </b>post.subredditName</p>  
+    <p><b>Title: </b>{{ post['title'] }}</p>
+    <p><b>Content: </b>{{ post['content'] }}</p>
+    <p><b>Score: </b>{{ post['score'] }}</p>
+    <p><b>Subreddit: </b>{{ post['subredditName'] }}</p>
+    <button><a href="/posts/{{ post['id'] }}/edit">Edit</a></button>
+    <button type="submit"><a href="/posts/{{ post['id'] }}/delete">Delete</a></button>
+    <button type="submit"><a href="/posts/{{ post['id'] }}">Detailed overwiew</a></button>
     <br>
   {% endfor %}
 </body>

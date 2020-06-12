@@ -32,7 +32,7 @@ class Post:
     def delete(self):
         with db as cursor:
             cursor.execute(
-                "DELETE FROM Posts WHERE Id = ?;", (self.id)
+                "DELETE FROM Posts WHERE Id = ?;", (self.id,)
             )
 
     def edit(self, title: str, content: str):
@@ -51,8 +51,7 @@ class Post:
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT p.Title, p.Content, p.Score, p.SubredditName FROM Posts AS p
-                JOIN UserSubredditSubscriptions AS uss ON p.AuthorId = uss.UserId
+                SELECT p.Id, p.Title, p.Content, p.Score, p.SubredditName FROM Posts AS p
                 WHERE p.AuthorId = ?
                 ORDER BY p.Score DESC
                 ''', (id,)
@@ -61,7 +60,7 @@ class Post:
             rows = cursor.fetchall()
 
             return list(map(lambda row: {
-                'title': row[0], 'content': row[1], 'score': row[2], 'subredditName': row[3]
+                'id': row[0], 'title': row[1], 'content': row[2], 'score': row[3], 'subredditName': row[4]
             }, rows))
 
     def updateScore(self, amount: int):
@@ -89,9 +88,12 @@ class Post:
                 ''', (id,)
             )
             result = cursor.fetchone()
-            data = {}
+            data = {
+                "id": id,
+                "title": result[1], 
+                "content": result[2],
+                "score": result[3],
+                "subredditName": result[6]
+            }
 
-            data["title"] = result[1]
-            data["content"] = result[2]
-            data["subredditName"] = result[6]
             return data

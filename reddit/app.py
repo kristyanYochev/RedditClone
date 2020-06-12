@@ -115,24 +115,35 @@ def myPosts():
     if request.method == "GET":
         return render_template("my-posts.html", posts=Post.getFromUser(uid))          
 
-@app.route("/posts/<int:id>", methods=["GET", "PUT", "DELETE"])
+
+@app.route("/posts/<int:postId>", methods=["GET"])
 @login_required
 def post(postId: int):
     if request.method == "GET":
         return render_template("detailed.html", post=Post.fetch(postId))
 
-    elif request.method == "PUT":
+@app.route("/posts/<int:postId>/edit", methods=["GET", "POST"])
+@login_required
+def edit(postId: int):
+    if request.method == "GET":
+        return render_template("edit-post.html", post=Post.fetch(postId))
+
+    else:
         title: str = request.form["title"]
         content: str = request.form["content"]
 
         Post(postId).edit(title, content)
 
-        return redirect("/posts/{postId}")
+        return redirect("/myPosts")
 
-    else:
+
+@app.route("/posts/<int:postId>/delete", methods=["GET"])
+@login_required
+def delete(postId: int):
+    if request.method == "GET":
         Post(postId).delete()
 
-        return redirect('/posts')
+        return redirect('/myPosts')
 
 
 @app.route("/r")

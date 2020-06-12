@@ -121,7 +121,7 @@ def myPosts():
     uid = session["userId"]
 
     if request.method == "GET":
-        return render_template("my-posts.html", posts=Post.getFromUser(uid))          
+        return render_template("my-posts.html", posts=Post.getFromUser(uid))
 
 
 @app.route("/posts/<int:postId>", methods=["GET"])
@@ -129,6 +129,7 @@ def myPosts():
 def post(postId: int):
     if request.method == "GET":
         return render_template("detailed.html", post=Post.fetch(postId))
+
 
 @app.route("/posts/<int:postId>/edit", methods=["GET", "POST"])
 @login_required
@@ -153,6 +154,7 @@ def delete(postId: int):
 
         return redirect('/myPosts')
 
+
 @app.route("/posts/<int:postId>/upvote", methods=["GET"])
 @login_required
 def upvote(postId: int):
@@ -160,6 +162,7 @@ def upvote(postId: int):
         Post(postId).updateScore(1)
 
         return redirect('/')
+
 
 @app.route("/posts/<int:postId>/downvote", methods=["GET"])
 @login_required
@@ -169,6 +172,7 @@ def downvote(postId: int):
 
         return redirect('/')
 
+
 @app.route("/comments", methods=["POST"])
 def add_comment():
     content: str = request.form["content"]
@@ -177,9 +181,10 @@ def add_comment():
 
     uid = session["userId"]
 
-    Comment.add(content,postid,uid,parentid)
+    Comment.add(content, postid, uid, parentid)
 
     return redirect(f"/posts/{postid}")
+
 
 @app.route("/comments/<int:commentid>", methods=["GET", "PUT", "DELETE"])
 def delete_comments(commentid: int):
@@ -207,6 +212,7 @@ def delete_comments(commentid: int):
         except PermissionError:
             return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
 
+
 @app.route("/r")
 @login_required
 def subreddits():
@@ -215,13 +221,16 @@ def subreddits():
 
     return render_template("subreddits.html", subs=subs)
 
+
 @app.route("/r/<subredditName>", methods=["GET"])
 @login_required
 def subredditPosts(subredditName: str):
     if request.method == "GET":
-        return render_template("subreddit-posts.html",  
-        posts=Post.getBySubreddit(subredditName), 
-        subredditName = subredditName)
+        return render_template(
+            "subreddit-posts.html",
+            posts=Post.getBySubreddit(subredditName),
+            subredditName=subredditName
+        )
 
 
 @app.route("/subscribe/<subName>")

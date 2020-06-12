@@ -14,7 +14,7 @@ class Comment:
         with db as cursor:
             cursor.execute(
                 """
-                INSERT INTO Posts (Content, PostId, AuthorId, ParentId)
+                INSERT INTO Comments (Content, PostId, AuthorId, ParentCommentId)
                 VALUES (?, ?, ?, ?);""",
                 (
                     content,
@@ -35,7 +35,10 @@ class Comment:
     def edit(self, content: str):
         with db as cursor:
             cursor.execute(
-                "UPDATE Comments SET Content = ?;", (content,)
+                '''
+                UPDATE Comments SET Content = ?
+                WHERE Id = ?;
+                ''', (content, self.id,)
             )
 
     def fetch(self):
@@ -52,13 +55,15 @@ class Comment:
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT c.Content, u.UserName FROM Comments AS c
+                SELECT c.Id, c.AuthorId, c.Content, u.UserName FROM Comments AS c
                 JOIN Users AS u ON c.AuthorId = u.Id
-                WHERE c.PostId = ? AND c.ParentId IS NULL;
+                WHERE c.PostId = ? AND c.ParentCommentId IS NULL;
                 ''' ,(postId,)
             )
             rows = cursor.fetchall()
             return list(map(lambda row: {
-                'content': row[0],
-                'author': row[1]
+                'id': row[0],
+                'authorid': row[1],
+                'content': row[2],
+                'author': row[3]
             },rows))

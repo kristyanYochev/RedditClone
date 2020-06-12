@@ -16,8 +16,12 @@
     <button type="submit">Add shitty comment</button>
   </form>
   {% for comment in comments %}
-  <p><b>User: </b>{{ comment['author']}}</p>
-  <p><b>Their comment: </b>{{ comment['content'] }}</p>
+    <p><b>User: </b>{{ comment['author']}}</p>
+    <p><b>Their comment: </b>{{ comment['content'] }}</p>
+    {% if comment['authorid'] == session['userId']%}
+    <button><a href="/comments/{{comment['id']}}/edit"> Make it shittier</a></button>
+    <button><a href="/comments/{{comment['id']}}/delete"> Delete this shoit</a></button>
+    {% endif %}
   {% endfor %}
 </body>
 </html>

@@ -182,22 +182,13 @@ def add_comment():
 
     return redirect(f"/posts/{postid}")
 
-@app.route("/comments/<int:commentid>", methods=["GET", "PUT", "DELETE"])
+@app.route("/comments/<int:commentid>/edit", methods=["GET", "POST",])
 @login_required
-def delete_comments(commentid: int):
-    uid = session["userId"]
-
+def edit_comment(commentid: int):
     if request.method == "GET":
         comment = Comment(commentid)
         comment.fetch()
         return render_template("edit_comment.html", comment=comment)
-    elif request.method == "DELETE":
-        try:
-            Comment(commentid).delete(uid)
-            return redirect("/")
-
-        except PermissionError:
-            return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
     else:
         try:
             values = (
@@ -208,6 +199,20 @@ def delete_comments(commentid: int):
 
         except PermissionError:
             return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
+
+@app.route("/comments/<int:commentid>/delete", methods=["GET"])
+@login_required
+def delete_comment(commentid: int):
+    uid = session["userId"]
+
+    if request.method == "GET":
+        try:
+            Comment(commentid).delete(uid)
+            return redirect("/")
+
+        except PermissionError:
+            return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
+    
 
 @app.route("/r")
 @login_required

@@ -6,11 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/comments/{{comment.id}}" method="POST">
+    <form action="/comments/{{comment.id}}/edit" method="POST">
         <p>
             <label>
               Comment:
-              <input name="comment" value={{comment.content}}>
+              <input name="content" value={{comment.content}}>
             </label>
         </p>
         <p>

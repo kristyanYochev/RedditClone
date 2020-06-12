@@ -121,7 +121,7 @@ def myPosts():
     uid = session["userId"]
 
     if request.method == "GET":
-        return render_template("my-posts.html", posts=Post.getFromUser(uid))          
+        return render_template("my-posts.html", posts=Post.getFromUser(uid))
 
 
 @app.route("/posts/<int:postId>", methods=["GET"])
@@ -129,6 +129,7 @@ def myPosts():
 def post(postId: int):
     if request.method == "GET":
         return render_template("detailed.html", post=Post.fetch(postId), comments=Comment.getByPost(postId))
+
 
 @app.route("/posts/<int:postId>/edit", methods=["GET", "POST"])
 @login_required
@@ -153,6 +154,7 @@ def delete(postId: int):
 
         return redirect('/myPosts')
 
+
 @app.route("/posts/<int:postId>/upvote", methods=["GET"])
 @login_required
 def upvote(postId: int):
@@ -161,6 +163,7 @@ def upvote(postId: int):
 
         return redirect('/')
 
+
 @app.route("/posts/<int:postId>/downvote", methods=["GET"])
 @login_required
 def downvote(postId: int):
@@ -168,6 +171,7 @@ def downvote(postId: int):
         Post(postId).updateScore(-1)
 
         return redirect('/')
+
 
 @app.route("/comments", methods=["POST"])
 @login_required
@@ -178,9 +182,10 @@ def add_comment():
 
     uid = session["userId"]
 
-    Comment.add(content,postid,uid,parentid)
+    Comment.add(content, postid, uid, parentid)
 
     return redirect(f"/posts/{postid}")
+
 
 @app.route("/comments/<int:commentid>/edit", methods=["GET", "POST",])
 @login_required
@@ -200,6 +205,7 @@ def edit_comment(commentid: int):
         except PermissionError:
             return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
 
+
 @app.route("/comments/<int:commentid>/delete", methods=["GET"])
 @login_required
 def delete_comment(commentid: int):
@@ -212,23 +218,36 @@ def delete_comment(commentid: int):
 
         except PermissionError:
             return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
-    
 
-@app.route("/r")
+          
+@app.route("/r", methods=["GET", "POST"])
 @login_required
 def subreddits():
-    search_term = request.args.get("q")
-    subs = Subreddit.search(search_term, session["userId"])
+    if request.method == "GET":
+        search_term = request.args.get("q")
+        subs = Subreddit.search(search_term, session["userId"])
 
-    return render_template("subreddits.html", subs=subs)
+        return render_template("subreddits.html", subs=subs)
+    else:
+        try:
+            Subreddit(request.form["sub"]).addToDb()
+            return redirect("/")
+        except IntegrityError:
+            return """
+            <h1>Cannot create an existing subreddit</h1>
+            <a href="/">BACK TO HOME</a>
+            """
+
 
 @app.route("/r/<subredditName>", methods=["GET"])
 @login_required
 def subredditPosts(subredditName: str):
     if request.method == "GET":
-        return render_template("subreddit-posts.html",  
-        posts=Post.getBySubreddit(subredditName), 
-        subredditName = subredditName)
+        return render_template(
+            "subreddit-posts.html",
+            posts=Post.getBySubreddit(subredditName),
+            subredditName=subredditName
+        )
 
 
 @app.route("/subscribe/<subName>")

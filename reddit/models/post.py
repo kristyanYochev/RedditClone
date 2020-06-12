@@ -32,7 +32,10 @@ class Post:
     def delete(self):
         with db as cursor:
             cursor.execute(
-                "DELETE FROM Posts WHERE Id = ?;", (self.id,)
+                """
+                DELETE FROM Posts WHERE Id = ?;
+                """,
+                (self.id,)
             )
 
     def edit(self, title: str, content: str):
@@ -51,16 +54,21 @@ class Post:
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT p.Id, p.Title, p.Content, p.Score, p.SubredditName FROM Posts AS p
-                WHERE p.AuthorId = ?
-                ORDER BY p.Score DESC
+                SELECT p.Id, p.Title, p.Content, p.Score, p.SubredditName
+                    FROM Posts AS p
+                    WHERE p.AuthorId = ?
+                ORDER BY p.Score DESC;
                 ''', (id,)
             )
 
             rows = cursor.fetchall()
 
             return list(map(lambda row: {
-                'id': row[0], 'title': row[1], 'content': row[2], 'score': row[3], 'subredditName': row[4]
+                'id': row[0],
+                'title': row[1],
+                'content': row[2],
+                'score': row[3],
+                'subredditName': row[4]
             }, rows))
 
     @staticmethod
@@ -68,21 +76,23 @@ class Post:
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT p.Id, p.Title, p.Content, p.Score, p.SubredditName, u.UserName FROM UserSubredditSubscriptions uss
-                JOIN Posts p ON p.SubredditName = uss.SubredditName
-                JOIN Users u ON p.AuthorId = u.Id
-                WHERE uss.UserId = ?
-                ORDER BY p.Score DESC, p.UploadTime DESC;    
+                SELECT p.Id, p.Title, p.Content, p.Score,
+                    p.SubredditName, u.UserName
+                FROM UserSubredditSubscriptions uss
+                    JOIN Posts p ON p.SubredditName = uss.SubredditName
+                    JOIN Users u ON p.AuthorId = u.Id
+                    WHERE uss.UserId = ?
+                ORDER BY p.Score DESC, p.UploadTime DESC;
                 ''', (id,)
             )
 
             rows = cursor.fetchall()
 
             return list(map(lambda row: {
-                'id': row[0], 
-                'title': row[1], 
-                'content': row[2], 
-                'score': row[3], 
+                'id': row[0],
+                'title': row[1],
+                'content': row[2],
+                'score': row[3],
                 'subredditName': row[4],
                 'author': row[5]
             }, rows))
@@ -92,19 +102,20 @@ class Post:
         with db as cursor:
             cursor.execute(
                 '''
-                SELECT p.Id, p.Title, p.Content, p.Score, u.UserName FROM Posts AS p
-                JOIN Users u ON p.AuthorId = u.Id
-                WHERE p.SubredditName = ?
-                ORDER BY p.Score DESC, p.UploadTime DESC;    
+                SELECT p.Id, p.Title, p.Content, p.Score, u.UserName
+                    FROM Posts AS p
+                    JOIN Users u ON p.AuthorId = u.Id
+                    WHERE p.SubredditName = ?
+                ORDER BY p.Score DESC, p.UploadTime DESC;
                 ''', (subredditName,)
             )
 
             rows = cursor.fetchall()
 
             return list(map(lambda row: {
-                'title': row[1], 
-                'content': row[2], 
-                'score': row[3], 
+                'title': row[1],
+                'content': row[2],
+                'score': row[3],
                 'author': row[4]
             }, rows))
 
@@ -135,7 +146,7 @@ class Post:
             result = cursor.fetchone()
             data = {
                 "id": id,
-                "title": result[1], 
+                "title": result[1],
                 "content": result[2],
                 "score": result[3],
                 "subredditName": result[6]

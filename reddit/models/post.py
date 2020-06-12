@@ -72,7 +72,7 @@ class Post:
                 JOIN Posts p ON p.SubredditName = uss.SubredditName
                 JOIN Users u ON p.AuthorId = u.Id
                 WHERE uss.UserId = ?
-                ORDER BY p.Score, p.UploadTime DESC;    
+                ORDER BY p.Score DESC, p.UploadTime DESC;    
                 ''', (id,)
             )
 
@@ -85,6 +85,27 @@ class Post:
                 'score': row[3], 
                 'subredditName': row[4],
                 'author': row[5]
+            }, rows))
+
+    @staticmethod
+    def getBySubreddit(subredditName: str):
+        with db as cursor:
+            cursor.execute(
+                '''
+                SELECT p.Id, p.Title, p.Content, p.Score, u.UserName FROM Posts AS p
+                JOIN Users u ON p.AuthorId = u.Id
+                WHERE p.SubredditName = ?
+                ORDER BY p.Score DESC, p.UploadTime DESC;    
+                ''', (subredditName,)
+            )
+
+            rows = cursor.fetchall()
+
+            return list(map(lambda row: {
+                'title': row[1], 
+                'content': row[2], 
+                'score': row[3], 
+                'author': row[4]
             }, rows))
 
     def updateScore(self, amount: int):

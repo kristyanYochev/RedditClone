@@ -33,7 +33,11 @@ app = create_app()
 @app.route("/")
 def index():
     if session.get("loggedIn"):
-        return render_template("index.html", posts=Post.getFeed(session.get("userId")))
+        return render_template(
+            "index.html",
+            posts=Post.getFeed(session.get("userId")),
+            subreddits=User(session.get("userId")).getSubscribedSubreddits()
+        )
     else:
         return render_template("index.html")
 
@@ -212,6 +216,14 @@ def subreddits():
     subs = Subreddit.search(search_term, session["userId"])
 
     return render_template("subreddits.html", subs=subs)
+
+@app.route("/r/<subredditName>", methods=["GET"])
+@login_required
+def subredditPosts(subredditName: str):
+    if request.method == "GET":
+        return render_template("subreddit-posts.html",  
+        posts=Post.getBySubreddit(subredditName), 
+        subredditName = subredditName)
 
 
 @app.route("/subscribe/<subName>")

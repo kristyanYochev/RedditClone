@@ -14,7 +14,13 @@
     <a href="/myPosts">My Posts</a>
     <a href="/r">Search subreddits</a>
     <a href="/logout">Log out</a>
-    <h1>My Feed</h1>
+    <h2>My Subreddits</h2>
+    <ul>
+      {% for subreddit in subreddits %}
+        <li><a href="/r/{{ subreddit }}">r/{{ subreddit }}</a></li>
+      {% endfor %}
+    </ul>
+    <h2>My Feed</h2>
     {% for post in posts %}
       <p><b>Title: </b>{{ post['title'] }}</p>
       <p><b>Content: </b>{{ post['content'] }}</p>

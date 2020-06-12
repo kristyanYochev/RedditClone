@@ -124,7 +124,7 @@ def myPosts():
 @login_required
 def post(postId: int):
     if request.method == "GET":
-        return render_template("detailed.html", post=Post.fetch(postId))
+        return render_template("detailed.html", post=Post.fetch(postId), comments=Comment.getByPost(postId))
 
 @app.route("/posts/<int:postId>/edit", methods=["GET", "POST"])
 @login_required
@@ -166,6 +166,7 @@ def downvote(postId: int):
         return redirect('/')
 
 @app.route("/comments", methods=["POST"])
+@login_required
 def add_comment():
     content: str = request.form["content"]
     postid: int = request.form["postId"]
@@ -178,6 +179,7 @@ def add_comment():
     return redirect(f"/posts/{postid}")
 
 @app.route("/comments/<int:commentid>", methods=["GET", "PUT", "DELETE"])
+@login_required
 def delete_comments(commentid: int):
     uid = session["userId"]
 

@@ -46,3 +46,19 @@ class Comment:
 
             row = cursor.fetchone()
             self.content = row[0]
+
+    @staticmethod
+    def getByPost(postId: int):
+        with db as cursor:
+            cursor.execute(
+                '''
+                SELECT c.Content, u.UserName FROM Comments AS c
+                JOIN Users AS u ON c.AuthorId = u.Id
+                WHERE c.PostId = ? AND c.ParentId IS NULL;
+                ''' ,(postId,)
+            )
+            rows = cursor.fetchall()
+            return list(map(lambda row: {
+                'content': row[0],
+                'author': row[1]
+            },rows))

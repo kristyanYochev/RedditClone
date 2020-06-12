@@ -126,8 +126,9 @@ def delete_comments(commentid: int):
     uid = session["userId"]
 
     if request.method == "GET":
-        Comment(commentid).fetch()
-        return render_template("edit_comment.html", comment=Comment(commentid))
+        comment = Comment(commentid)
+        comment.fetch()
+        return render_template("edit_comment.html", comment=comment)
     elif request.method == "DELETE":
         try:
             Comment(commentid).delete(uid)

@@ -56,3 +56,17 @@ class User:
                 """,
                 (self.id, sub)
             )
+
+    def getSubscribedSubreddits(self):
+        with db as cursor:
+            cursor.execute(
+                """
+                SELECT SubredditName FROM UserSubredditSubscriptions
+                    WHERE UserId = ?
+                """,
+                (self.id,)
+            )
+
+            rows = cursor.fetchall()
+
+            return list(map(lambda row: row[0], rows))

@@ -33,7 +33,11 @@ app = create_app()
 @app.route("/")
 def index():
     if session.get("loggedIn"):
-        return render_template("index.html", posts=Post.getFeed(session.get("userId")))
+        return render_template(
+            "index.html",
+            posts=Post.getFeed(session.get("userId")),
+            subreddits=User(session.get("userId")).getSubscribedSubreddits()
+        )
     else:
         return render_template("index.html")
 

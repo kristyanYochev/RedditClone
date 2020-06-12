@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reddit Clone - {{ subredditName }}</title>
+</head>
+<body>
+  <h1>Posts in r/{{ subredditName }}</h1>
+  {% for post in posts %}
+    <p><b>Title: </b>{{ post['title'] }}</p>
+    <p><b>Content: </b>{{ post['content'] }}</p>
+    <p><b>Score: </b>{{ post['score'] }}</p>
+    <p><b>Author: </b>{{ post['author'] }}</p>
+    <br>
+  {% endfor %}
+</body>
+</html>

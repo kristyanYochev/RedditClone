@@ -6,6 +6,7 @@ from reddit.models.post import Post
 from reddit.models.subreddit import Subreddit
 
 from sqlite3 import IntegrityError
+from typing import Callable
 
 
 def create_app() -> Flask:
@@ -14,7 +15,19 @@ def create_app() -> Flask:
     return app
 
 
+def login_required(f: Callable):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get("loggedIn"):
+            return f(*args, **kwargs)
+        else:
+            return redirect("/login")
+
+    return wrapper
+
+
 app = create_app()
+
 
 @app.route("/")
 def index():
@@ -64,15 +77,16 @@ def register():
         except IntegrityError:
             return render_template("register.html", error="Username taken!")
 
+
 @app.route("/logout", methods=["GET"])
 def logout():
     if request.method == "GET":
-        session.pop("userId", None)
-        session.pop("loggedIn", None)
+        session.clear()
         return redirect("/")
 
 
 @app.route("/posts", methods=["GET", "POST"])
+@login_required
 def posts():
     uid = session["userId"]
 
@@ -88,7 +102,11 @@ def posts():
             return redirect("/")
 
         except IntegrityError:
-            return render_template("post.html", error="Cannot add to non-existent subreddit!")
+            return render_template(
+                "post.html",
+                error="Cannot add to non-existent subreddit!"
+            )
+
 
 @app.route("/myPosts", methods=["GET"])
 def myPosts():
@@ -98,6 +116,7 @@ def myPosts():
         return render_template("my-posts.html", posts=Post.getFromUser(uid))          
 
 @app.route("/posts/<int:id>", methods=["GET", "PUT", "DELETE"])
+@login_required
 def post(postId: int):
     if request.method == "GET":
         return render_template("detailed.html", post=Post.fetch(postId))
@@ -116,8 +135,8 @@ def post(postId: int):
         return redirect('/posts')
 
 
-
 @app.route("/r")
+@login_required
 def subreddits():
     search_term = request.args.get("q")
     subs = Subreddit.search(search_term, session["userId"])
@@ -126,6 +145,7 @@ def subreddits():
 
 
 @app.route("/subscribe/<subName>")
+@login_required
 def subscribe(subName: str):
     try:
         User(session["userId"]).subscribeToSubreddit(subName)

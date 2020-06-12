@@ -32,7 +32,10 @@ app = create_app()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if session.get("loggedIn"):
+        return render_template("index.html", posts=Post.getFeed(session.get("userId")))
+    else:
+        return render_template("index.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -145,6 +148,22 @@ def delete(postId: int):
         Post(postId).delete()
 
         return redirect('/myPosts')
+
+@app.route("/posts/<int:postId>/upvote", methods=["GET"])
+@login_required
+def upvote(postId: int):
+    if request.method == "GET":
+        Post(postId).updateScore(1)
+
+        return redirect('/')
+
+@app.route("/posts/<int:postId>/downvote", methods=["GET"])
+@login_required
+def downvote(postId: int):
+    if request.method == "GET":
+        Post(postId).updateScore(-1)
+
+        return redirect('/')
 
 @app.route("/comments", methods=["POST"])
 def add_comment():

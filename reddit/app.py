@@ -77,7 +77,7 @@ def posts():
     uid = session["userId"]
 
     if request.method == "GET":
-        return render_template("post.html", posts=Post.getFromUser(uid), error=None)
+        return render_template("post.html", error=None)
     else:
         title: str = request.form["title"]
         content: str = request.form["content"]
@@ -90,6 +90,13 @@ def posts():
         except IntegrityError:
             return render_template("post.html", error="Cannot add to non-existent subreddit!")
 
+@app.route("/myPosts", methods=["GET"])
+def myPosts():
+    uid = session["userId"]
+
+    if request.method == "GET":
+        return render_template("my-posts.html", posts=Post.getFromUser(uid))          
+
 @app.route("/posts/<int:id>", methods=["GET", "PUT", "DELETE"])
 def post(postId: int):
     if request.method == "GET":
@@ -101,7 +108,7 @@ def post(postId: int):
 
         Post(postId).edit(title, content)
 
-        return redirect("/posts/<int:postId>")
+        return redirect("/posts/{postId}")
 
     else:
         Post(postId).delete()

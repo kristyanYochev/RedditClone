@@ -8,9 +8,10 @@
 <body>
   <h1>My Posts</h1>
   {% for post in posts %}
-    <p><b>Title: </b>post.title</p>
-    <p><b>Content: </b>post.content</p>
-    <p><b>Subreddit: </b>post.subredditName</p>  
+    <p><b>Title: </b>{{ post['title'] }}</p>
+    <p><b>Content: </b>{{ post['content'] }}</p>
+    <p><b>Score: </b>{{ post['score'] }}</p>
+    <p><b>Subreddit: </b>{{ post['subredditName'] }}</p>  
     <br>
   {% endfor %}
 </body>

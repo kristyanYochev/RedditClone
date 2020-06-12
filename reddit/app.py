@@ -213,13 +213,23 @@ def delete_comments(commentid: int):
             return "<h1>No Permissions<h1><a href='/'>I AM BACK!</a>"
 
 
-@app.route("/r")
+@app.route("/r", methods=["GET", "POST"])
 @login_required
 def subreddits():
-    search_term = request.args.get("q")
-    subs = Subreddit.search(search_term, session["userId"])
+    if request.method == "GET":
+        search_term = request.args.get("q")
+        subs = Subreddit.search(search_term, session["userId"])
 
-    return render_template("subreddits.html", subs=subs)
+        return render_template("subreddits.html", subs=subs)
+    else:
+        try:
+            Subreddit(request.form["sub"]).addToDb()
+            return redirect("/")
+        except IntegrityError:
+            return """
+            <h1>Cannot create an existing subreddit</h1>
+            <a href="/">BACK TO HOME</a>
+            """
 
 
 @app.route("/r/<subredditName>", methods=["GET"])

@@ -20,6 +20,13 @@
         <li><a href="/r/{{ subreddit }}">r/{{ subreddit }}</a></li>
       {% endfor %}
     </ul>
+    <form action="/r" method="POST">
+      <label>
+        New subreddit name:
+        <input name="sub" placeholder="Your amazing subreddit">
+        <button type="submit">Add a subreddit</button>
+      </label>
+    </form>
     <h2>My Feed</h2>
     {% for post in posts %}
       <p><b>Title: </b>{{ post['title'] }}</p>

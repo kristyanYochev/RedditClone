@@ -215,6 +215,14 @@ def subreddits():
 
     return render_template("subreddits.html", subs=subs)
 
+@app.route("/r/<subredditName>", methods=["GET"])
+@login_required
+def subredditPosts(subredditName: str):
+    if request.method == "GET":
+        return render_template("subreddit-posts.html",  
+        posts=Post.getBySubreddit(subredditName), 
+        subredditName = subredditName)
+
 
 @app.route("/subscribe/<subName>")
 @login_required

@@ -63,6 +63,30 @@ class Post:
                 'id': row[0], 'title': row[1], 'content': row[2], 'score': row[3], 'subredditName': row[4]
             }, rows))
 
+    @staticmethod
+    def getFeed(id: int):
+        with db as cursor:
+            cursor.execute(
+                '''
+                SELECT p.Id, p.Title, p.Content, p.Score, p.SubredditName, u.UserName FROM UserSubredditSubscriptions uss
+                JOIN Posts p ON p.SubredditName = uss.SubredditName
+                JOIN Users u ON p.AuthorId = u.Id
+                WHERE uss.UserId = ?
+                ORDER BY p.Score, p.UploadTime DESC;    
+                ''', (id,)
+            )
+
+            rows = cursor.fetchall()
+
+            return list(map(lambda row: {
+                'id': row[0], 
+                'title': row[1], 
+                'content': row[2], 
+                'score': row[3], 
+                'subredditName': row[4],
+                'author': row[5]
+            }, rows))
+
     def updateScore(self, amount: int):
         with db as cursor:
             cursor.execute(

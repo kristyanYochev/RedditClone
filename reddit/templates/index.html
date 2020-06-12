@@ -13,6 +13,18 @@
     <a href="/posts">Add post</a>
     <a href="/myPosts">My Posts</a>
     <a href="/logout">Log out</a>
+    <h1>My Feed</h1>
+    {% for post in posts %}
+      <p><b>Title: </b>{{ post['title'] }}</p>
+      <p><b>Content: </b>{{ post['content'] }}</p>
+      <p><b>Score: </b>{{ post['score'] }}</p>
+      <p><b>Subreddit: </b>{{ post['subredditName'] }}</p>
+      <p><b>Author: </b>{{ post['author'] }}</p>
+      <button type="submit"><a href="/posts/{{ post['id'] }}/upvote">Upvote</a></button>
+      <button type="submit"><a href="/posts/{{ post['id'] }}/downvote">Downvote</a></button>
+      <button type="submit"><a href="/posts/{{ post['id'] }}">Detailed overwiew</a></button>
+      <br>
+    {% endfor %}
   {% endif %}
 </body>
 </html>
